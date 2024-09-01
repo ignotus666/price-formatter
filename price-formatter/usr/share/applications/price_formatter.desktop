@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Price-formatter
+Comment=A simple GUI application for formatting prices (ES>EN) in DOCX files
+Exec=python3 /usr/local/bin/price_formatter.py
+Icon=price_formatter-icon
+Terminal=false
+Type=Application
+Categories=Office;
+

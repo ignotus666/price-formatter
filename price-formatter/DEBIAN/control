@@ -1,0 +1,9 @@
+Package: price-formatter
+Version: 1.0
+Section: base
+Priority: optional
+Architecture: all
+Depends: python3, python3-tk, python3-lxml, python3-pil, python3-pil.imagetk
+Maintainer: Daryl Hanlon <darylo1@hotmail.com>
+Description: Price-formatter - A simple GUI application for modifying price formats (ES>EN) in DOCX files
+ This is a simple application for replacing price formats (ES>EN) in DOCX files. Drag and drop a DOCX file onto the app to modify it.
