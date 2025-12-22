@@ -1,6 +1,12 @@
-
 #!/bin/bash
-# No pip install allowed in postinst (PEP 668 compliance)
-# If tkinterdnd2 is not available via apt, instruct user to install it via pipx or in a virtual environment.
-echo "If you need tkinterdnd2, please install it using pipx (pipx install tkinterdnd2) or in a virtual environment."
+if command -v python3 &>/dev/null; then
+	if python3 -m pip --version &>/dev/null; then
+		echo "Installing tkinterdnd2 via pip..."
+		python3 -m pip install --user tkinterdnd2 || echo "Could not install tkinterdnd2. Please check your internet connection or install manually."
+	else
+		echo "pip for python3 is not installed. Please install pip and rerun: python3 -m pip install --user tkinterdnd2"
+	fi
+else
+	echo "Python3 is not installed. Please install Python3 and rerun: python3 -m pip install --user tkinterdnd2"
+fi
 
