@@ -38,21 +38,49 @@ def replace_prices_in_docx(input_file, direction='es_to_en'):
             if texts:
                 combined_text = ''.join([t.text for t in texts if t.text])
                 if direction == 'es_to_en':
-                    # ES to EN: 12,34€ -> €12.34
-                    def replace_price(match):
+                    # ES to EN: 12,34€ -> €12.34, 12,1€ -> €12.1, 12€ -> €12
+                    def replace_price_decimal2(match):
                         euros = match.group(1)
                         cents = match.group(2)
                         return f'€{euros}.{cents}'
-                    price_regex = r'(?<![\d.,])(\d{1,3}(?:\.\d{3})*),(\d{2})\s*€(?![\w.])'
-                    new_combined_text = re.sub(price_regex, replace_price, combined_text)
+                    def replace_price_decimal1(match):
+                        euros = match.group(1)
+                        cents = match.group(2)
+                        return f'€{euros}.{cents}'
+                    def replace_price_integer(match):
+                        euros = match.group(1)
+                        return f'€{euros}'
+                    # Decimal prices (2 digits)
+                    price_regex_decimal2 = r'(?<![\d.,])(\d{1,3}(?:\.\d{3})*),(\d{2})\s*€(?![\w.])'
+                    # Decimal prices (1 digit)
+                    price_regex_decimal1 = r'(?<![\d.,])(\d{1,3}(?:\.\d{3})*),(\d{1})\s*€(?![\w.])'
+                    # Integer prices
+                    price_regex_integer = r'(?<![\d.,])(\d{1,3}(?:\.\d{3})*)\s*€(?![\w.,\d])'
+                    new_combined_text = re.sub(price_regex_decimal2, replace_price_decimal2, combined_text)
+                    new_combined_text = re.sub(price_regex_decimal1, replace_price_decimal1, new_combined_text)
+                    new_combined_text = re.sub(price_regex_integer, replace_price_integer, new_combined_text)
                 else:
-                    # EN to ES: €12.34 -> 12,34€
-                    def replace_price(match):
+                    # EN to ES: €12.34 -> 12,34€, €12.1 -> 12,1€, €12 -> 12€
+                    def replace_price_decimal2(match):
                         euros = match.group(1)
                         cents = match.group(2)
                         return f'{euros},{cents}€'
-                    price_regex = r'€\s*(\d{1,3}(?:\.\d{3})*)\.(\d{2})(?![\w])'
-                    new_combined_text = re.sub(price_regex, replace_price, combined_text)
+                    def replace_price_decimal1(match):
+                        euros = match.group(1)
+                        cents = match.group(2)
+                        return f'{euros},{cents}€'
+                    def replace_price_integer(match):
+                        euros = match.group(1)
+                        return f'{euros}€'
+                    # Decimal prices (2 digits)
+                    price_regex_decimal2 = r'€\s*(\d{1,3}(?:\.\d{3})*)\.(\d{2})(?![\w])'
+                    # Decimal prices (1 digit)
+                    price_regex_decimal1 = r'€\s*(\d{1,3}(?:\.\d{3})*)\.(\d{1})(?![\w])'
+                    # Integer prices
+                    price_regex_integer = r'€\s*(\d{1,3}(?:\.\d{3})*)(?![\w.,\d])'
+                    new_combined_text = re.sub(price_regex_decimal2, replace_price_decimal2, combined_text)
+                    new_combined_text = re.sub(price_regex_decimal1, replace_price_decimal1, new_combined_text)
+                    new_combined_text = re.sub(price_regex_integer, replace_price_integer, new_combined_text)
                 offset = 0
                 for t in texts:
                     if t.text:
